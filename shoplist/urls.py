@@ -1,8 +1,9 @@
 from django.conf.urls import url, include
 
 from .views import *
+from .ingredient_views import *
 
-#app_name = 'shoplist'
+
 urlpatterns = [
     url(r'^add/$', list_view),
     url(r'^delete/(?P<pk>[0-9]+)/', delete, name='delete'),
