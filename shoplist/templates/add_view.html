@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>'Add Ingredient'</title>
+</head>
+
+<style>
+form{
+    display:inline;
+}
+
+</style>
+
+<body>
+    <form action="/add/" method="post">
+        {% csrf_token%}
+        {{form.as_p}}
+        <input type='submit' value="add">
+    </form>
+
+    <ul>
+    {% for item in shop_list %}
+        <li>
+
+            {{ item}}
+            <form action="{% url 'delete' item.id %}" method="post">
+                {% csrf_token%}
+                <input type='submit' value="Delete">
+            </form>
+
+            <form action="{% url 'edit' item.id %}" method="post">
+                {% csrf_token%}
+                <input type='submit' value="Edit">
+            </form>
+
+        </li>
+    {% endfor %}
+
+    </ul>
+
+</body>
+</html>
