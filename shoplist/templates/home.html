@@ -1,8 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Welcome to Django{% endblock %}
-{% block head %}Welcome to Django{% endblock %}
+{% block title %}Home{% endblock %}
+{% block head %}Home{% endblock %}
 {% block content %}
     <p>Welcome {{ user.username }} !!!</p>
     <a href="/add/">Change shoplist</a><br>
+    <a href="/menu/">Check menu!</a><br>
     <a href="/logout/">Logout</a><br>
 {% endblock %}

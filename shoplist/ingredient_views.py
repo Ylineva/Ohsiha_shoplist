@@ -24,8 +24,6 @@ def edit_page(request, pk):
             item.number_of_items = form.cleaned_data['number_of_items']
             item.save()
             return HttpResponseRedirect('/add/')
-        # show the possible errors
-        return render(request, 'edit_view.html', {'form': form, 'pk': pk})
     item = get_object_or_404(Ingredient, pk=pk)
 
     ingr = {

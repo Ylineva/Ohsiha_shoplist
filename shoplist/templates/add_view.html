@@ -1,17 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>'Add Ingredient'</title>
-</head>
+{% extends "base.html" %}
+{% block title %}Edit entry{% endblock %}
 
-<style>
-form{
-    display:inline;
-}
 
-</style>
+{% block style %}form{display:inline;}{% endblock %}
 
+{% block head %}Edit entry{% endblock %}
+
+{% block content %}
 <body>
     <form action="/add/" method="post">
         {% csrf_token%}
@@ -19,10 +14,11 @@ form{
         <input type='submit' value="add">
     </form>
 
+    <br><h4>Items in shoplist:</h4>
+
     <ul>
     {% for item in shop_list %}
         <li>
-
             {{ item}}
             <form action="{% url 'delete' item.id %}" method="post">
                 {% csrf_token%}
@@ -38,6 +34,4 @@ form{
     {% endfor %}
 
     </ul>
-
-</body>
-</html>
+{% endblock %}

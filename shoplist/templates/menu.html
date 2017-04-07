@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Menu{% endblock %}
+{% block head %}Menu{% endblock %}
+{% block content %}
+
+    <a href="/home/">Home</a><br><br>
+
+<a href="/menu/1/">Monday</a>
+<a href="/menu/2/">Tuesday</a>
+<a href="/menu/3/">Wednesday</a>
+<a href="/menu/4/">Thursday</a>
+<a href="/menu/5/">Friday</a>
+<a href="/menu/6/">Saturday</a>
+<a href="/menu/7/">Sunday</a> <br><br>
+
+    <p>Here is the menus:</p>
+
+    {% for res in restaurants %}
+        <h4>{{res.name}}</h4>
+
+        {{res.error}}
+
+        {% for meal in res.meals%}
+                <li> {{meal.name}}
+                {% for item in meal.items%}
+                    <ul>{{item.name}} ({{item.diets}})</ul>
+                {% endfor%}
+                </li>
+        {% endfor%}
+
+    {% endfor%}
+
+{% endblock %}

@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_PATH = os.path.join(BASE_DIR, 'templates')
 
 django.contrib.auth.LOGIN_URL = '/'
-LOGIN_REDIRECT_URL = 'home/'
+LOGIN_REDIRECT_URL = '/home/'
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
