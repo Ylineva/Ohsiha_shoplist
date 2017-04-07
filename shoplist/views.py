@@ -48,8 +48,7 @@ def register(request):
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
-def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
-
+def parse_newton(week_day):
 
     url_to_fetch = "http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx/GetMenuByWeekday?KitchenId=$kitchen&MenuTypeId=$menutype&Week=$week&Weekday=$weekday&lang='fi'&format=json";
     url_base = 'http://www.juvenes.fi/DesktopModules/Talents.LunchMenu/LunchMenuServices.asmx'
@@ -65,19 +64,15 @@ def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
     which_format = "format="
     wanted_format = "json"
 
-    path_to_name = ['d', 'KitchenName']
-    path_to_food = ['d', 'MealOptions']
-
     got_url = url_base + '/' + get_kitchen + kitchenid + '&' + get_menuid + menu_id + '&' + week_part + week + '&' + which_weekday + week_day + '&' + which_language + language + '&' + which_format + wanted_format
 
     restaurant = dict()
     with urllib.request.urlopen(got_url) as food_url:
         s = food_url.read()
         s = s[1:-2]
-
         data = json.loads(s.decode('utf-8'))
 
-    restaurants = []
+
     data = data['d']
     data = json.loads(data)
     restaurant['name'] = data['KitchenName']
@@ -116,12 +111,73 @@ def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
     if len(meals) == 0:
         restaurant['error'] = "No list for given day"
 
+    #return restaurant['meals'][0]["items"]
+    return restaurant
 
-    restaurants.append(restaurant)
+def parse_sodexo(week_day):
+
+    #"http://www.sodexo.fi/ruokalistat/output/daily_json/$kitchen/$timestr/fi"
+    base = 'http://www.sodexo.fi/ruokalistat/output/daily_json/'
+    kitchenid = '12812'
+
+
+    real_week_day = datetime.datetime.now().isoweekday()
+    time_delta = datetime.timedelta(days=int(week_day) - int(real_week_day))
+
+    timestamp = (datetime.datetime.today() + time_delta).strftime('%Y/%m/%d')
+
+    got_url = base + kitchenid + "/" + timestamp + "/fi"
+
+    restaurant = dict()
+    with urllib.request.urlopen(got_url) as food_url:
+        data = food_url.read()
+        data = json.loads(data.decode('utf-8'))
+
+
+
+    meals = []
+    try:
+        restaurant['name'] = data["meta"]["ref_title"]
+
+        for c in data["courses"]:
+            lunch = dict()
+
+            item_in_meal = []
+            lunch["name"] = c["title_en"]
+            for ing in c["desc_en"].replace(" and", ",").split(", "):
+                food = dict()
+                food["name"] = ing
+                if "properties" in c:
+                    food["diets"] = c["properties"]
+
+                item_in_meal.append(food)
+            lunch["items"] = item_in_meal
+            meals.append(lunch)
+    except TypeError:
+        restaurant['name'] = "TTY Tietotalo"
+
+    restaurant['meals'] = meals
+
+    if len(meals) == 0:
+        restaurant['error'] = "No list for given day"
+
+    # return restaurant['meals'][0]["items"]
+    return restaurant
+
+def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
+
+
+    restaurants = []
+
+
+    #return HttpResponse(parse_sodexo(week_day))
+    #return HttpResponse(parse_newton(week_day))
+    restaurants.append(parse_newton(week_day))
+    restaurants.append(parse_sodexo(week_day))
 
     #data = "asd"
     #for item in data:
     #    data2 = item.get('MealOptions')
 
-    message = {'msg': restaurants}
+
     return render(request, 'menu.html', {'restaurants': restaurants})
