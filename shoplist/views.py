@@ -164,16 +164,59 @@ def parse_sodexo(week_day):
     # return restaurant['meals'][0]["items"]
     return restaurant
 
+def parse_amiga(week_day):
+    #http: // www.amica.fi / api / restaurant / menu / week?language = en & restaurantPageId = 69171 & weekDate =
+    base = 'http://www.amica.fi/api/restaurant/menu/week?language=en&restaurantPageId=69171&weekDate='
+
+    real_week_day = datetime.datetime.now().isoweekday()
+    time_delta = datetime.timedelta(days=int(1) - int(real_week_day))
+
+    timestamp = (datetime.datetime.today() + time_delta).strftime('%Y-%m-%d')
+    got_url = base + timestamp
+    restaurant = dict()
+    with urllib.request.urlopen(got_url) as food_url:
+        data = food_url.read()
+        data = json.loads(data.decode('utf-8'))
+
+    restaurant["name"] = "Amiga Reaktor"
+
+    days_menu = []
+    meals = []
+    for day in data["LunchMenus"]:
+        for set_menu in day["SetMenus"]:
+            lunch = dict()
+
+            item_in_meal = []
+            lunch["name"] = set_menu["Name"]
+            for ing in set_menu["Meals"]:
+                food = dict()
+                food["name"] = ing["Name"]
+                food["diets"] = ing["Diets"]
+                item_in_meal.append(food)
+            lunch["items"] = item_in_meal
+            meals.append(lunch)
+        days_menu.append(meals)
+
+    course = days_menu[int(week_day)-1]
+
+    restaurant['meals'] = course
+
+    if len(course) == 0:
+        restaurant['error'] = "No list for given day"
+
+    return restaurant
+
 def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
 
 
     restaurants = []
 
-
+    #return HttpResponse(parse_amiga(week_day))
     #return HttpResponse(parse_sodexo(week_day))
     #return HttpResponse(parse_newton(week_day))
     restaurants.append(parse_newton(week_day))
     restaurants.append(parse_sodexo(week_day))
+    restaurants.append(parse_amiga(week_day))
 
     #data = "asd"
     #for item in data:
