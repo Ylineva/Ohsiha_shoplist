@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Menu{% endblock %}
+
+{% block style %}ul.menus {line-height: 90%;}{% endblock %}
+
+
 {% block head %}Menu{% endblock %}
 {% block content %}
 
@@ -16,18 +20,31 @@
     <p>Here is the menus:</p>
 
     {% for res in restaurants %}
+        <div class="col-md-4">
         <h4>{{res.name}}</h4>
 
         {{res.error}}
 
         {% for meal in res.meals%}
-                <li> {{meal.name}}
+                <li class="menus"> {{meal.name}}
                 {% for item in meal.items%}
-                    <ul>{{item.name}} ({{item.diets}})</ul>
+                    {% if item.name != "" %}
+                    <ul class="menus">
+                        {{item.name}}
+                    {% endif %}
+
+                        {% if item.diets != None %}
+                        ({{item.diets}})
+                        {% endif %}
+
+                    {% if item.name != "" %}
+                    </ul>
+                    {% endif %}
+
                 {% endfor%}
                 </li>
         {% endfor%}
-
+        </div>
     {% endfor%}
 
 {% endblock %}
