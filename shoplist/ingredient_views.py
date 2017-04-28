@@ -12,7 +12,7 @@ def delete(request, pk):
 
     return HttpResponseRedirect('/add/')
 
-
+@login_required
 def edit_page(request, pk):
 
     if request.method == 'POST':
@@ -40,6 +40,12 @@ def edit_page(request, pk):
 
 @login_required
 def list_view(request):
+
+    if len(Shoplist.objects.filter(user=request.user)) == 0:
+        shoplist = Shoplist.objects.create(user=request.user)
+    else:
+        shoplist = Shoplist.objects.filter(user=request.user)[0]
+
     if request.method == 'POST':
 
         form = IngredientForm(request.POST)
@@ -47,14 +53,15 @@ def list_view(request):
 
             ingredient = Ingredient.objects.create(name=form.cleaned_data['name'],
                                                    amount=form.cleaned_data['amount'],
-                                                   number_of_items=form.cleaned_data['number_of_items'])
+                                                   number_of_items=form.cleaned_data['number_of_items'],
+                                                   shoplist=shoplist)
 
             return HttpResponseRedirect('/add/')
 
     else:
         form = IngredientForm()
 
-    ingredients = Ingredient.objects.all()
+    ingredients = Ingredient.objects.filter(shoplist=shoplist)
     shop_list = []
 
     for i in range(len(ingredients)):

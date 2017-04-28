@@ -34,18 +34,19 @@ def home_page(request):
 
 
 def register(request):
+    form = RegisterForm()
     if request.method == 'POST':
 
         form = RegisterForm(request.POST)
         if form.is_valid():
 
-            student = Student.objects.create(user=User.objects.create(username=form.cleaned_data['username'],
-                                                   password=form.cleaned_data['password1']))
+            user = User.objects.create_user(username=form.cleaned_data['username'],
+                                     password=form.cleaned_data['password1'])
+
+            student = Student.objects.create(user=user)
 
             return HttpResponseRedirect('/')
 
-    else:
-        form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
 
@@ -55,16 +56,8 @@ def menu_page(request, week_day = str(datetime.datetime.now().isoweekday()) ):
 
     restaurants = []
 
-    #return HttpResponse(parse_amiga(week_day))
-    #return HttpResponse(parse_sodexo(week_day))
-    #return HttpResponse(parse_newton(week_day))
     restaurants.append(parse_newton(week_day))
     restaurants.append(parse_sodexo(week_day))
     restaurants.append(parse_amiga(week_day))
-
-    #data = "asd"
-    #for item in data:
-    #    data2 = item.get('MealOptions')
-
 
     return render(request, 'menu.html', {'restaurants': restaurants})
