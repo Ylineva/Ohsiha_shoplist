@@ -27,10 +27,18 @@ def home_page(request):
     if request.user.is_superuser:
         return HttpResponseRedirect("/admin/")
 
-    return render_to_response(
-        'home.html',
-        {'user': request.user}
-    )
+    if len(Shoplist.objects.filter(user=request.user)) == 0:
+        shoplist = Shoplist.objects.create(user=request.user)
+    else:
+        shoplist = Shoplist.objects.filter(user=request.user)[0]
+
+    ingredients = Ingredient.objects.filter(shoplist=shoplist)
+    shop_list = []
+
+    for i in range(len(ingredients)):
+        shop_list.append(ingredients[i])
+
+    return render(request, 'home.html', {'user': request.user, 'shop_list': shop_list})
 
 
 def register(request):

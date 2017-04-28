@@ -4,14 +4,18 @@
 
 {% block style %}form{display:inline;}{% endblock %}
 
-{% block head %}Edit entry{% endblock %}
+{% block head %}Edit Shoplist{% endblock %}
 
 {% block content %}
 <body>
+
+<a href="/">Back to home</a> <br><br>
+
     <form action="/add/" method="post">
         {% csrf_token%}
         {{form.as_p}}
         <input type='submit' value="add">
+
     </form>
 
     <br><h4>Items in shoplist:</h4>
