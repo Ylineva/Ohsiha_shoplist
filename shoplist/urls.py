@@ -2,15 +2,12 @@ from django.conf.urls import url, include
 
 from .views import *
 from .ingredient_views import *
-from .constants import *
 
 
 MENU_URL = "menu/"
 
 urlpatterns = [
-    # url(r'^' +  + '$', list_view),
-    # url(r'^' +  + '$', list_view),
-    # url(r'^' +  + '$', list_view),
+
     url(r'^' + MENU_URL + '$', menu_page),
     url(r'^' + MENU_URL + '([1-7])/$', menu_page),
 
@@ -22,5 +19,5 @@ urlpatterns = [
     url(r'^logout/$', logout_page),
     url(r'^register/$', register),
     url(r'^oauth/', include('social_django.urls', namespace='social')),
-    # url(r'^' +  + '$', list_view),
+
 ]
